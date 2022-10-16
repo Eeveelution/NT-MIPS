@@ -52,10 +52,11 @@ CPP=cl.exe
 OUTDIR=.\Release
 INTDIR=.\Release
 
-ALL : 
+ALL : "$(OUTDIR)\UPLOADER_CLIENT.exe"
 
 CLEAN : 
-	-@erase 
+	-@erase "$(INTDIR)\main.obj"
+	-@erase "$(OUTDIR)\UPLOADER_CLIENT.exe"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -83,7 +84,12 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /pdb:"$(OUTDIR)/UPLOADER_CLIENT.pdb" /machine:I386\
  /out:"$(OUTDIR)/UPLOADER_CLIENT.exe" 
 LINK32_OBJS= \
-	
+	"$(INTDIR)\main.obj"
+
+"$(OUTDIR)\UPLOADER_CLIENT.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
 
 !ELSEIF  "$(CFG)" == "UPLOADER_CLIENT - Win32 Debug"
 
@@ -100,20 +106,28 @@ LINK32_OBJS= \
 OUTDIR=.\Debug
 INTDIR=.\Debug
 
-ALL : 
+ALL : "$(OUTDIR)\UPLOADER_CLIENT.exe" "$(OUTDIR)\UPLOADER_CLIENT.bsc"
 
 CLEAN : 
-	-@erase 
+	-@erase "$(INTDIR)\main.obj"
+	-@erase "$(INTDIR)\main.sbr"
+	-@erase "$(INTDIR)\vc40.idb"
+	-@erase "$(INTDIR)\vc40.pdb"
+	-@erase "$(OUTDIR)\UPLOADER_CLIENT.bsc"
+	-@erase "$(OUTDIR)\UPLOADER_CLIENT.exe"
+	-@erase "$(OUTDIR)\UPLOADER_CLIENT.ilk"
+	-@erase "$(OUTDIR)\UPLOADER_CLIENT.pdb"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /FR /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE"\
- /Fp"$(INTDIR)/UPLOADER_CLIENT.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c 
+ /FR"$(INTDIR)/" /Fp"$(INTDIR)/UPLOADER_CLIENT.pch" /YX /Fo"$(INTDIR)/"\
+ /Fd"$(INTDIR)/" /c 
 CPP_OBJS=.\Debug/
-CPP_SBRS=.\.
+CPP_SBRS=.\Debug/
 # ADD BASE RSC /l 0x407 /d "_DEBUG"
 # ADD RSC /l 0x407 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -121,7 +135,13 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 BSC32_FLAGS=/nologo /o"$(OUTDIR)/UPLOADER_CLIENT.bsc" 
 BSC32_SBRS= \
-	
+	"$(INTDIR)\main.sbr"
+
+"$(OUTDIR)\UPLOADER_CLIENT.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386
@@ -131,7 +151,12 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /pdb:"$(OUTDIR)/UPLOADER_CLIENT.pdb" /debug /machine:I386\
  /out:"$(OUTDIR)/UPLOADER_CLIENT.exe" 
 LINK32_OBJS= \
-	
+	"$(INTDIR)\main.obj"
+
+"$(OUTDIR)\UPLOADER_CLIENT.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
 
 !ENDIF 
 
@@ -165,6 +190,34 @@ LINK32_OBJS= \
 
 !ENDIF 
 
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\main.c
+
+!IF  "$(CFG)" == "UPLOADER_CLIENT - Win32 Release"
+
+
+"$(INTDIR)\main.obj" : $(SOURCE) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "UPLOADER_CLIENT - Win32 Debug"
+
+
+BuildCmds= \
+	$(CPP) $(CPP_PROJ) $(SOURCE) \
+	
+
+"$(INTDIR)\main.obj" : $(SOURCE) "$(INTDIR)"
+   $(BuildCmds)
+
+"$(INTDIR)\main.sbr" : $(SOURCE) "$(INTDIR)"
+   $(BuildCmds)
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project
 ################################################################################
