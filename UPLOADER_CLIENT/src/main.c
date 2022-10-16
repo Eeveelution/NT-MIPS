@@ -55,14 +55,6 @@ void main(int argc, char** argv) {
 
 	fread(fileData, 1, fileSize, filePtr);
 
-	printf("file[2]: %02x\n", ((char*) fileData)[2]);
-	printf("file[3]: %02x\n", ((char*) fileData)[3]);
-	printf("file[4]: %02x\n", ((char*) fileData)[4]);
-	printf("file[5]: %02x\n", ((char*) fileData)[5]);
-	printf("file[6]: %02x\n", ((char*) fileData)[6]);
-
-	printf("Size: %d; Filename Size: %d; sizeof(long int): %d\n", fileSize, filenameSize, sizeof(long int));
-
 	send(s, &fileSize, sizeof(long int), 0);
 	send(s, &filenameSize, sizeof(long int), 0);
 	send(s, argv[2], filenameSize * sizeof(char), 0);
